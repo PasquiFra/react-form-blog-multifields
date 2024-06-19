@@ -97,6 +97,7 @@ const Form = ({ setError }) => {
     return (
         <>
             <form onSubmit={submitForm}>
+                //! Creazione inputs del form
                 {inputs.map((input) => {
                     switch (input.type) {
                         case 'checkbox':
