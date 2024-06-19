@@ -23,3 +23,15 @@
         transition: transform .4s ease-out;
     }
 }
+
+#posts-list {
+
+    figure {
+        height: 150px;
+
+        img {
+            height: 100%;
+            width: auto;
+        }
+    }
+}
