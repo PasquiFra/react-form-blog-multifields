@@ -62,12 +62,24 @@ const Form = ({ setError }) => {
         },
     ]
 
-    const handleInputField = (name, value) => {
-        console.log(name, value)
-        setFormData(current => ({
-            ...current,
-            [name]: value
-        }));
+    const handleInputField = (name, value, tagName) => {
+        console.log(name, value, tagName)
+        if (name === "tags[]") {
+            setFormData(current => {
+                const updatedTags = value
+                    ? [...current.tags, tagName]
+                    : current.tags.filter(tag => tag !== tagName);
+                return {
+                    ...current,
+                    tags: updatedTags
+                };
+            });
+        } else {
+            setFormData(current => ({
+                ...current,
+                [name]: value
+            }));
+        }
     }
 
     const submitForm = (event) => {
@@ -104,7 +116,7 @@ const Form = ({ setError }) => {
                                                         id={`tag-${tag.toLowerCase().split(' ').join('-')}`}
                                                         type={input.type}
                                                         name={input.name}
-                                                        onChange={(event) => handleInputField(input.name, event.target.checked)}
+                                                        onChange={(event) => handleInputField(input.name, event.target.checked, tag)}
                                                         className={input.className}
                                                     />
                                                 </label>
@@ -187,7 +199,17 @@ const Form = ({ setError }) => {
                                     </div>
                                     <div>
                                         <strong>Tags:</strong>
-                                        <span></span>
+                                        {
+                                            post.tags.map((tag, index) => {
+                                                return (
+                                                    <span
+                                                        key={`tag-${tag}-${index}`}
+                                                        className="mx-2">
+                                                        {tag}
+                                                    </span>
+                                                )
+                                            })
+                                        }
                                     </div>
                                     <figure>
                                         <img src={post.image} alt={`foto-post-${post.index}`} />
