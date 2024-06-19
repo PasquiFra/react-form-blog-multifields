@@ -1,13 +1,20 @@
 import { useState } from "react"
-
-import TitleTag from './TitleTag'
 import './formStyle.scss'
 
 const Form = ({ setError }) => {
 
+    // Setto l'oggetto data del form per raccogliere i vari campi input
+    const setupFormData = {
+        title: "",
+        content: "",
+        image: "",
+        category: "",
+        tags: [],
+        published: null
+    }
 
-    const [titles, setTitles] = useState([])
-    const [titleValue, setTitleValue] = useState('')
+    const [formData, setFormData] = useState(setupFormData);
+    const [posts, setPosts] = useState([]);
 
     // setto i campi di input 
     const tagList = ["Bitcoin", "Digital Gold", "Cryptocurrency", "Ethereum", "Tokens"]
@@ -18,8 +25,6 @@ const Form = ({ setError }) => {
             type: 'text',
             name: 'title',
             placeholder: 'Inserisci un titolo...',
-            value: titleValue,
-            onChange: (event) => setTitleValue(event.target.value),
             className: 'form-control'
         },
         {
@@ -27,8 +32,6 @@ const Form = ({ setError }) => {
             type: 'text',
             name: "content",
             placeholder: 'Inserisci una descrizione...',
-            value: "",
-            onChange: () => { },
             className: 'form-control'
         },
         {
@@ -36,8 +39,6 @@ const Form = ({ setError }) => {
             type: 'text',
             name: "image",
             placeholder: 'Inserisci il link ad una immagine',
-            value: '',
-            onChange: () => { },
             className: 'form-control'
         },
         {
@@ -45,43 +46,36 @@ const Form = ({ setError }) => {
             type: 'select',
             name: "category",
             placeholder: 'Inserisci una categoria...',
-            value: '',
-            onChange: () => { },
             className: 'form-select'
         },
         {
             label: "Tags",
             type: 'checkbox',
             name: "tags[]",
-            onChange: () => { },
             className: 'ms-2'
         },
         {
             label: "Pubblicato",
             type: 'checkbox',
             name: "published",
-            onChange: () => { },
             className: 'ms-2'
         },
     ]
 
-    // Setto l'oggetto data del form per raccogliere i vari campi input
-
-    const setupFormData = {
-        title: "",
-        content: "",
-        image: "",
-        category: "",
-        tags: [],
-        published: null
+    const handleInputField = (name, value) => {
+        console.log(name, value)
+        setFormData(current => ({
+            ...current,
+            [name]: value
+        }));
     }
-
 
     const submitForm = (event) => {
         event.preventDefault()
-        console.log(event)
         try {
-
+            console.log(formData)
+            setPosts(currentPosts => ([...currentPosts, formData]))
+            setFormData(setupFormData)
         }
         catch (err) {
             setError(err.message)
@@ -110,7 +104,7 @@ const Form = ({ setError }) => {
                                                         id={`tag-${tag.toLowerCase().split(' ').join('-')}`}
                                                         type={input.type}
                                                         name={input.name}
-                                                        onChange={input.onChange}
+                                                        onChange={(event) => handleInputField(input.name, event.target.checked)}
                                                         className={input.className}
                                                     />
                                                 </label>
@@ -129,7 +123,7 @@ const Form = ({ setError }) => {
                                             id={`input-${input.name}`}
                                             type={input.type}
                                             name={input.name}
-                                            onChange={input.onChange}
+                                            onChange={(event) => handleInputField(input.name, event.target.checked)}
                                             className={input.className}
                                         />
                                     </div>
@@ -142,11 +136,16 @@ const Form = ({ setError }) => {
                                     <label className="form-check-label w-100" htmlFor={`input-${input.name}`}>
                                         <strong>{input.label}</strong>
                                     </label>
-                                    <select className={input.className} id={`input-${input.name}`}>
+                                    <select
+                                        className={input.className}
+                                        id={`input-${input.name}`}
+                                        onChange={(event) => handleInputField(input.name, event.target.value)}
+                                        name={input.name}
+                                    >
                                         <option defaultValue={'selected'}>{input.placeholder}</option>
                                         {categoryList.map((cat, index) => {
                                             return (
-                                                <option key={`cat-${cat}`} value={index}>{cat}</option>
+                                                <option key={`cat-${cat}`} value={cat}>{cat}</option>
                                             )
                                         })}
                                     </select>
@@ -161,12 +160,10 @@ const Form = ({ setError }) => {
                                     </label>
                                     <input
                                         id={`input-${input.name}`}
-
                                         type={input.type}
                                         name={input.name}
                                         placeholder={input.placeholder}
-                                        value={input.value}
-                                        onChange={input.onChange}
+                                        onChange={(event) => handleInputField(input.name, event.target.value)}
                                         className={input.className}
                                     />
                                 </div>
@@ -177,20 +174,9 @@ const Form = ({ setError }) => {
                 <button type="submit" className="btn btn-success my-3">Aggiungi</button>
             </form>
             <div className="my-4">
-                <h3>I titoli dei tuoi articoli:</h3>
+                <h3>I tuoi posts:</h3>
                 <ul>
-                    {
-                        titles.map((title, index) => {
-                            return (
-                                <TitleTag
-                                    key={`${title}-${index}`}
-                                    title={title} index={index}
-                                    updateItem={updateItem}
-                                    removeItem={removeItem}
-                                />
-                            )
-                        })
-                    }
+
                 </ul>
             </div>
         </>
