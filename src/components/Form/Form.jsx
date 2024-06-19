@@ -189,6 +189,7 @@ const Form = ({ setError }) => {
             <div className="my-4">
                 <h3>I tuoi posts:</h3>
                 <ul id="posts-list">
+                    //! stampa dei posts
                     {
                         posts.map((post, index) => {
                             return (
